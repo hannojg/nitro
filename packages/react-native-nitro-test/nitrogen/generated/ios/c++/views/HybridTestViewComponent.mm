@@ -31,6 +31,10 @@ using namespace margelo::nitro::test::views;
   std::shared_ptr<HybridTestViewSpecSwift> _hybridView;
 }
 
+//+ (BOOL)shouldBeRecycled {
+//    return NO;
+//}
+
 + (void) load {
   [super load];
   [RCTComponentViewFactory.currentComponentViewFactory registerComponentViewClass:[HybridTestViewComponent class]];
@@ -71,7 +75,7 @@ using namespace margelo::nitro::test::views;
   // 2. Update each prop individually
   swiftPart.beforeUpdate();
 
-  // isBlue: boolean
+  // isBlue: optional
   if (newViewProps.isBlue.isDirty) {
     swiftPart.setIsBlue(newViewProps.isBlue.value);
     newViewProps.isBlue.isDirty = false;
@@ -106,6 +110,10 @@ using namespace margelo::nitro::test::views;
 
   // 4. Continue in base class
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)prepareForRecycle {
+    [super prepareForRecycle];
 }
 
 @end

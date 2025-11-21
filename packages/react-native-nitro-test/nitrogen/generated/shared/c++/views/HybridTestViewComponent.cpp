@@ -25,12 +25,12 @@ namespace margelo::nitro::test::views {
                                            const HybridTestViewProps& sourceProps,
                                            const react::RawProps& rawProps):
     react::ViewProps(context, sourceProps, rawProps, filterObjectKeys),
-    isBlue([&]() -> CachedProp<bool> {
+    isBlue([&]() -> CachedProp<std::optional<bool>> {
       try {
         const react::RawValue* rawValue = rawProps.at("isBlue", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.isBlue;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<bool>::fromRawValue(*runtime, value, sourceProps.isBlue);
+        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.isBlue);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("TestView.isBlue: ") + exc.what());
       }
@@ -97,7 +97,8 @@ namespace margelo::nitro::test::views {
 
   HybridTestViewComponentDescriptor::HybridTestViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters)
     : ConcreteComponentDescriptor(parameters,
-                                  react::RawPropsParser(/* enableJsiParser */ true)) {}
+                                  react::RawPropsParser(/* enableJsiParser */ true)) {
+    }
 
   std::shared_ptr<const react::Props> HybridTestViewComponentDescriptor::cloneProps(const react::PropsParserContext& context,
                                                                                     const std::shared_ptr<const react::Props>& props,

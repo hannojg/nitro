@@ -16,11 +16,11 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/components/view/ViewProps.h>
 
+#include <optional>
 #include "ColorScheme.hpp"
 #include <functional>
 #include <memory>
 #include "HybridTestViewSpec.hpp"
-#include <optional>
 
 namespace margelo::nitro::test::views {
 
@@ -43,7 +43,7 @@ namespace margelo::nitro::test::views {
                         const react::RawProps& rawProps);
 
   public:
-    CachedProp<bool> isBlue;
+    CachedProp<std::optional<bool>> isBlue;
     CachedProp<bool> hasBeenCalled;
     CachedProp<ColorScheme> colorScheme;
     CachedProp<std::function<void()>> someCallback;

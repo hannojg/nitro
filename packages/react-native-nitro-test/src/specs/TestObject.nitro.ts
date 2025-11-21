@@ -3,6 +3,7 @@ import {
   type AnyMap,
   type Sync,
   type CustomType,
+  // @ts-expect-error Idk
   type AnyHybridObject,
 } from 'react-native-nitro-modules'
 import type { TestView } from './TestView.nitro'

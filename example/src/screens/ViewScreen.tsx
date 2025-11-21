@@ -1,53 +1,16 @@
-import * as React from 'react'
+import * as React from "react";
 
-import { StyleSheet, View, Text, Button, Platform } from 'react-native'
-import { callback, NitroModules } from 'react-native-nitro-modules'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useColors } from '../useColors'
-import { HybridTestObjectSwiftKotlin, TestView } from 'react-native-nitro-test'
-import { useIsFocused } from '@react-navigation/native'
-
-const VIEWS_X = 15
-const VIEWS_Y = 15
+import { StyleSheet, View, Text, Button, Platform } from "react-native";
+import { callback, NitroModules } from "react-native-nitro-modules";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColors } from "../useColors";
+import { HybridTestObjectSwiftKotlin, TestView } from "react-native-nitro-test";
+import { useIsFocused } from "@react-navigation/native";
 
 export function ViewScreenImpl() {
-  const safeArea = useSafeAreaInsets()
-  const colors = useColors()
-  const [counter, setCounter] = React.useState(0)
-  const [isUpdating, setIsUpdating] = React.useState(true)
-
-  const views = React.useMemo(
-    () =>
-      [...Array(counter)].map((_, i) => (
-        <TestView
-          key={i}
-          hybridRef={callback((ref) => {
-            console.log(`Ref initialized!`)
-            ref.someMethod()
-            const isBlue = HybridTestObjectSwiftKotlin.getIsViewBlue(ref)
-            console.log(`Is View blue: ${isBlue}`)
-          })}
-          style={styles.view}
-          isBlue={i % 2 === 0}
-          someCallback={callback(() => console.log(`Callback called!`))}
-          colorScheme="dark"
-          hasBeenCalled={false}
-          onTouchEnd={() => {
-            console.log(`Touched View #${i}!`)
-          }}
-        />
-      )),
-    [counter]
-  )
-
-  React.useEffect(() => {
-    if (!isUpdating) return
-    const i = setInterval(
-      () => setCounter((c) => (c >= VIEWS_X * VIEWS_Y ? 0 : c + 1)),
-      10
-    )
-    return () => clearInterval(i)
-  }, [isUpdating])
+  const safeArea = useSafeAreaInsets();
+  const colors = useColors();
+  const [toggle, setToggle] = React.useState(false);
 
   return (
     <View style={[styles.container, { paddingTop: safeArea.top }]}>
@@ -60,34 +23,45 @@ export function ViewScreenImpl() {
       <View style={styles.resultContainer}>
         <View style={[styles.viewShadow]}>
           <View style={[styles.viewBorder, { borderColor: colors.foreground }]}>
-            <View style={styles.viewContainer}>{views}</View>
+            <View style={styles.viewContainer}>
+              {toggle && (
+                <TestView
+                  key={"blue" + Date.now()}
+                  isBlue={true}
+                  style={styles.view}
+                />
+              )}
+              {!toggle && (
+                <>
+                  <TestView key={"red" + Date.now()} style={styles.view} />
+                  <Text>Should be red</Text>
+                </>
+              )}
+            </View>
           </View>
         </View>
       </View>
 
       <View style={[styles.bottomView, { backgroundColor: colors.background }]}>
         <Text style={styles.resultText} numberOfLines={2}>
-          {isUpdating ? '🔄 Updating...' : '📱 Idle'}
+          {toggle ? "toggled second view" : ""}
         </Text>
         <View style={styles.flex} />
-        <Button
-          title={isUpdating ? 'Stop Updating' : 'Start Updating'}
-          onPress={() => setIsUpdating((i) => !i)}
-        />
+        <Button title={"Toggle view"} onPress={() => setToggle((i) => !i)} />
       </View>
     </View>
-  )
+  );
 }
 
 export function ViewScreen() {
-  const isFocused = useIsFocused()
-  return isFocused ? <ViewScreenImpl /> : null
+  const isFocused = useIsFocused();
+  return isFocused ? <ViewScreenImpl /> : null;
 }
 
 const styles = StyleSheet.create({
   header: {
     fontSize: 26,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     paddingBottom: 15,
     marginHorizontal: 15,
   },
@@ -98,16 +72,16 @@ const styles = StyleSheet.create({
   topControls: {
     marginHorizontal: 15,
     marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   buildTypeText: {
     fontFamily: Platform.select({
-      ios: 'Menlo',
-      macos: 'Menlo',
-      android: 'monospace',
+      ios: "Menlo",
+      macos: "Menlo",
+      android: "monospace",
     }),
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   segmentedControl: {
     minWidth: 180,
@@ -118,9 +92,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   viewShadow: {
-    width: '80%',
+    width: "80%",
     aspectRatio: 1,
-    shadowColor: 'black',
+    shadowColor: "black",
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 5,
@@ -133,32 +107,32 @@ const styles = StyleSheet.create({
   },
   viewContainer: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   view: {
-    width: `${100 / VIEWS_X}%`,
-    height: `${100 / VIEWS_Y}%`,
-    marginLeft: -0.0001,
+    width: 100,
+    height: 100,
+    backgroundColor: "orange",
   },
   testCase: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   testBox: {
     flexShrink: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   resultText: {
     flexShrink: 1,
   },
   testName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   testStatus: {
     fontSize: 14,
@@ -172,18 +146,18 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingBottom: 45,
   },
   chartsContainer: {
-    alignItems: 'stretch',
-    width: '70%',
+    alignItems: "stretch",
+    width: "70%",
   },
   nitroResults: {},
   turboResults: {},
   title: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 25,
   },
   chart: {
@@ -194,14 +168,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   flex: { flex: 1 },
   bottomView: {
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
     elevation: 15,
-    shadowColor: 'black',
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 5,
@@ -211,7 +185,7 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 15,
     paddingVertical: 9,
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
   },
-})
+});

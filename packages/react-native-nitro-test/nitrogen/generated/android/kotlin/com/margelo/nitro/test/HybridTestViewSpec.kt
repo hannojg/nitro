@@ -46,7 +46,7 @@ abstract class HybridTestViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var isBlue: Boolean
+  abstract var isBlue: Boolean?
   
   @get:DoNotStrip
   @get:Keep

@@ -10,6 +10,7 @@
 // Forward declaration of `ColorScheme` to properly resolve imports.
 namespace margelo::nitro::test { enum class ColorScheme; }
 
+#include <optional>
 #include "ColorScheme.hpp"
 #include "JColorScheme.hpp"
 #include <functional>
@@ -45,14 +46,14 @@ namespace margelo::nitro::test {
   }
 
   // Properties
-  bool JHybridTestViewSpec::getIsBlue() {
-    static const auto method = javaClassStatic()->getMethod<jboolean()>("isBlue");
+  std::optional<bool> JHybridTestViewSpec::getIsBlue() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getIsBlue");
     auto __result = method(_javaPart);
-    return static_cast<bool>(__result);
+    return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
   }
-  void JHybridTestViewSpec::setIsBlue(bool isBlue) {
-    static const auto method = javaClassStatic()->getMethod<void(jboolean /* isBlue */)>("setBlue");
-    method(_javaPart, isBlue);
+  void JHybridTestViewSpec::setIsBlue(std::optional<bool> isBlue) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* isBlue */)>("setIsBlue");
+    method(_javaPart, isBlue.has_value() ? jni::JBoolean::valueOf(isBlue.value()) : nullptr);
   }
   bool JHybridTestViewSpec::getHasBeenCalled() {
     static const auto method = javaClassStatic()->getMethod<jboolean()>("hasBeenCalled");

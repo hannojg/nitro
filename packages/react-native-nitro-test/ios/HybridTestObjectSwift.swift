@@ -532,7 +532,7 @@ class HybridTestObjectSwift: HybridTestObjectSwiftKotlinSpec {
 
   func getIsViewBlue(view: any HybridTestViewSpec) throws -> Bool {
     guard let view = view as? HybridTestView else { return false }
-    return view.isBlue
+    return view.isBlue ?? false
   }
 
   func callbackSync(callback: @escaping () -> Double) throws -> Double {

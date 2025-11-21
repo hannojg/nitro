@@ -16,6 +16,7 @@
 // Forward declaration of `ColorScheme` to properly resolve imports.
 namespace margelo::nitro::test { enum class ColorScheme; }
 
+#include <optional>
 #include "ColorScheme.hpp"
 #include <functional>
 
@@ -46,8 +47,8 @@ namespace margelo::nitro::test {
 
     public:
       // Properties
-      virtual bool getIsBlue() = 0;
-      virtual void setIsBlue(bool isBlue) = 0;
+      virtual std::optional<bool> getIsBlue() = 0;
+      virtual void setIsBlue(std::optional<bool> isBlue) = 0;
       virtual bool getHasBeenCalled() = 0;
       virtual void setHasBeenCalled(bool hasBeenCalled) = 0;
       virtual ColorScheme getColorScheme() = 0;

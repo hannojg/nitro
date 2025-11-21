@@ -672,7 +672,7 @@ std::shared_ptr<HybridChildSpec> HybridTestObjectCpp::castBase(const std::shared
 }
 
 bool HybridTestObjectCpp::getIsViewBlue(const std::shared_ptr<HybridTestViewSpec>& view) {
-  return view->getIsBlue();
+  return view->getIsBlue().value_or(false);
 }
 
 double HybridTestObjectCpp::callbackSync(const std::function<double()>& callback) {

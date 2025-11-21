@@ -15,6 +15,7 @@ namespace NitroTest { class HybridTestViewSpec_cxx; }
 // Forward declaration of `ColorScheme` to properly resolve imports.
 namespace margelo::nitro::test { enum class ColorScheme; }
 
+#include <optional>
 #include "ColorScheme.hpp"
 #include <functional>
 
@@ -58,11 +59,12 @@ namespace margelo::nitro::test {
 
   public:
     // Properties
-    inline bool getIsBlue() noexcept override {
-      return _swiftPart.isBlue();
+    inline std::optional<bool> getIsBlue() noexcept override {
+      auto __result = _swiftPart.getIsBlue();
+      return __result;
     }
-    inline void setIsBlue(bool isBlue) noexcept override {
-      _swiftPart.setIsBlue(std::forward<decltype(isBlue)>(isBlue));
+    inline void setIsBlue(std::optional<bool> isBlue) noexcept override {
+      _swiftPart.setIsBlue(isBlue);
     }
     inline bool getHasBeenCalled() noexcept override {
       return _swiftPart.hasBeenCalled();

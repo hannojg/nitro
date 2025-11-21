@@ -50,8 +50,8 @@ namespace margelo::nitro::test {
 
   public:
     // Properties
-    bool getIsBlue() override;
-    void setIsBlue(bool isBlue) override;
+    std::optional<bool> getIsBlue() override;
+    void setIsBlue(std::optional<bool> isBlue) override;
     bool getHasBeenCalled() override;
     void setHasBeenCalled(bool hasBeenCalled) override;
     ColorScheme getColorScheme() override;
