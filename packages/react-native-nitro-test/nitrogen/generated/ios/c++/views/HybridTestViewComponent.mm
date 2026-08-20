@@ -76,34 +76,39 @@ using namespace margelo::nitro::test::views;
   auto& newViewProps = const_cast<HybridTestViewProps&>(newViewPropsConst);
   NitroTest::HybridTestViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
 
-  // 2. Update each prop individually
+  // 2. Check whether these props are being applied to a newly mounted View
+  // `isDirty` tracks changes to the ShadowNode. Fabric can mount an unchanged ShadowNode into a
+  // new native View, so every prop that has a value must be applied during the initial update.
+  const bool isInitialUpdate = oldProps == nullptr;
+
+  // 3. Update each prop individually
   swiftPart.beforeUpdate();
 
   // isBlue: boolean
-  if (newViewProps.isBlue.isDirty) {
+  if (newViewProps.isBlue.isDirty || (isInitialUpdate && newViewProps.isBlue.hasValue())) {
     swiftPart.setIsBlue(newViewProps.isBlue.value);
     newViewProps.isBlue.isDirty = false;
   }
   // hasBeenCalled: boolean
-  if (newViewProps.hasBeenCalled.isDirty) {
+  if (newViewProps.hasBeenCalled.isDirty || (isInitialUpdate && newViewProps.hasBeenCalled.hasValue())) {
     swiftPart.setHasBeenCalled(newViewProps.hasBeenCalled.value);
     newViewProps.hasBeenCalled.isDirty = false;
   }
   // colorScheme: enum
-  if (newViewProps.colorScheme.isDirty) {
+  if (newViewProps.colorScheme.isDirty || (isInitialUpdate && newViewProps.colorScheme.hasValue())) {
     swiftPart.setColorScheme(static_cast<int>(newViewProps.colorScheme.value));
     newViewProps.colorScheme.isDirty = false;
   }
   // someCallback: function
-  if (newViewProps.someCallback.isDirty) {
+  if (newViewProps.someCallback.isDirty || (isInitialUpdate && newViewProps.someCallback.hasValue())) {
     swiftPart.setSomeCallback(newViewProps.someCallback.value);
     newViewProps.someCallback.isDirty = false;
   }
 
   swiftPart.afterUpdate();
 
-  // 3. Update hybridRef if it changed
-  if (newViewProps.hybridRef.isDirty) {
+  // 4. Update hybridRef if it changed
+  if (newViewProps.hybridRef.isDirty || (isInitialUpdate && newViewProps.hybridRef.hasValue())) {
     // hybridRef changed - call it with new this
     const auto& maybeFunc = newViewProps.hybridRef.value;
     if (maybeFunc.has_value()) {
@@ -112,7 +117,7 @@ using namespace margelo::nitro::test::views;
     newViewProps.hybridRef.isDirty = false;
   }
 
-  // 4. Continue in base class
+  // 5. Continue in base class
   [super updateProps:props oldProps:oldProps];
 }
 

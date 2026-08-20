@@ -45,7 +45,7 @@ export function createSwiftHybridViewManager(
     )
     return `
 // ${p.jsSignature}
-if (newViewProps.${name}.isDirty) {
+if (newViewProps.${name}.isDirty || (isInitialUpdate && newViewProps.${name}.hasValue())) {
   swiftPart.${setter}(${indent(parse, '  ')});
   newViewProps.${name}.isDirty = false;
 }
@@ -126,15 +126,20 @@ using namespace ${namespace}::views;
   auto& newViewProps = const_cast<${propsClassName}&>(newViewPropsConst);
   ${swiftNamespace}::${HybridTSpecCxx}& swiftPart = _hybridView->getSwiftPart();
 
-  // 2. Update each prop individually
+  // 2. Check whether these props are being applied to a newly mounted View
+  // \`isDirty\` tracks changes to the ShadowNode. Fabric can mount an unchanged ShadowNode into a
+  // new native View, so every prop that has a value must be applied during the initial update.
+  const bool isInitialUpdate = oldProps == nullptr;
+
+  // 3. Update each prop individually
   swiftPart.beforeUpdate();
 
   ${indent(propAssignments.join('\n'), '  ')}
 
   swiftPart.afterUpdate();
 
-  // 3. Update hybridRef if it changed
-  if (newViewProps.hybridRef.isDirty) {
+  // 4. Update hybridRef if it changed
+  if (newViewProps.hybridRef.isDirty || (isInitialUpdate && newViewProps.hybridRef.hasValue())) {
     // hybridRef changed - call it with new this
     const auto& maybeFunc = newViewProps.hybridRef.value;
     if (maybeFunc.has_value()) {
@@ -143,7 +148,7 @@ using namespace ${namespace}::views;
     newViewProps.hybridRef.isDirty = false;
   }
 
-  // 4. Continue in base class
+  // 5. Continue in base class
   [super updateProps:props oldProps:oldProps];
 }
 
